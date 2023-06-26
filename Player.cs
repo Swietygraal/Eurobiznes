@@ -4,104 +4,129 @@ namespace Eurobiznes;
 
 public class Player
 {
+    private int player_nr;
     private int money;
-    private string color;
+    private char symbol;
     private int location;
-    private List<Property> owned_properties;
-    private List<RailwayLines> owned_railway_lines;
+    private List<BuyableLocation> owned_locations;
+    private int value_of_owned_properties;
+    private int owned_railways;
     private int rem_turns_in_jail;
     private bool is_bankrupt;
-    private bool owns_power_station;
-    private bool owns_water_supply_network;
+    private int power_and_water_owned;
+    private bool has_jail_card;
+    private int houses_built;
+    private int hotels_built;
 
-    public Player(string c)
+    public Player(char sym, int nr)
     {
+        player_nr = nr;
         money = 3000;
-        color = c;
+        symbol = sym;
         location = 0;
-        owned_properties = new List<Property>();
-        owned_railway_lines = new List<RailwayLines>();
+        value_of_owned_properties = 0;
+        owned_locations = new List<BuyableLocation>();
+        owned_railways = 0;
         rem_turns_in_jail = 0;
         is_bankrupt = false;
-        owns_power_station = false;
-        owns_water_supply_network = false;
+        power_and_water_owned = 0;
+        has_jail_card = false;
+        houses_built = 0;
+        hotels_built = 0;
     }
 
-    public bool inJail()
+    public int Money
     {
-        return (rem_turns_in_jail > 0);
+        get => money;
+        set => money = value;
     }
 
-    public bool isBankrupt()
+    public bool IsBankrupt
     {
-        return is_bankrupt;
+        get => is_bankrupt;
     }
 
-    public void newLocation(int n)
+    public int InJail
     {
-        location += n;
-        if (location > 39)
-            location -= 40;
+        get => rem_turns_in_jail;
+        set => rem_turns_in_jail = value;
     }
 
-    public int getLocation()
+    public int PlayerLocation
     {
-        return location;
+        get => location;
+        set => location = value;
     }
 
-    public void goToJail(int turns)
+    public int ValueOfProperties
     {
-        rem_turns_in_jail += turns;
-        location = 10;
+        get => value_of_owned_properties;
+        set => value_of_owned_properties = value;
     }
 
-    public int getMoney()
+    public int PowerAndWaterOwned
     {
-        return money;
+        get => power_and_water_owned;
+        set => power_and_water_owned = value;
     }
 
-    public void setBankrupt()
+    public char Symbol
     {
+        get => symbol;
+    }
+
+    public int PlayerNr
+    {
+        get => player_nr;
+    }
+
+    public int OwnedRailways
+    {
+        get => owned_railways;
+        set => owned_railways = value;
+    }
+
+    public bool JailCard
+    {
+        get => has_jail_card;
+        set => has_jail_card = value;
+    }
+
+    public int HousesBuilt
+    {
+        get => houses_built;
+        set => houses_built = value;
+    }
+
+    public int HotelsBuilt
+    {
+        get => hotels_built;
+        set => hotels_built = value;
+    }
+
+    public void AddLocation(BuyableLocation p)
+    {
+        owned_locations.Add(p);
+    }
+
+    public void RemoveLocation(BuyableLocation p)
+    {
+        owned_locations.Remove(p);
+    }
+
+    public void Lose(Board b)
+    {
+        money = 0;
+        foreach (BuyableLocation l in owned_locations)
+            l.Owner = null;
+        owned_locations.Clear();
+        value_of_owned_properties = 0;
+        owned_railways = 0;
         is_bankrupt = true;
-    }
-
-    public void setMoney(int amount)
-    {
-        money += amount;
-    }
-
-    public void addProperty(Property p)
-    {
-        owned_properties.Add(p);
-    }
-
-    public void addRailwayLine(RailwayLines r)
-    {
-        owned_railway_lines.Add(r);
-    }
-
-    public int ownedRailwaysNumber()
-    {
-        return owned_railway_lines.Count;
-    }
-
-    public bool OwnsPowerStation()
-    {
-        return owns_power_station;
-    }
-
-    public bool OwnsWaterSupplyNetwork()
-    {
-        return owns_water_supply_network;
-    }
-
-    public void SetPowerStationOwner()
-    {
-        owns_power_station = true;
-    }
-
-    public void SetWaterSupplyNetworkOwner()
-    {
-        owns_water_supply_network = true;
+        power_and_water_owned = 0;
+        houses_built = 0;
+        hotels_built = 0;
+        symbol = ' ';
+        b.MovePlayer(location, location, this);
     }
 }
